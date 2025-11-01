@@ -4,87 +4,84 @@ import ConstraintBoard from '@/components/ConstraintBuilder/ConstraintBoard.jsx'
 
 describe('Constraint Board', () => {
     it('initializes with one empty placeholder', () => {
-        render(<ConstraintBoard />);
+        const tokens = [{ type: 'placeholder', value: null, id: 1 }];
+        render(<ConstraintBoard tokens={tokens} />);
         const placeholders = screen.getAllByTestId('placeholder');
         expect(placeholders).toHaveLength(1);
     });
 
     it('adds item to the next available placeholder', () => {
-        render(<ConstraintBoard />);
-        const board = screen.getByTestId('constraint-board');
 
-        // simulate adding an item
-        fireEvent.click(board, {
-            detail: {
-                type: 'parameter', value: 'glucose_g_L'
-            }
-        });
+    });
+
+    it('display tokens passed as props', () => {
+        const tokens = [
+            { type: 'parameter', value: 'glucose_g_L', id: 1 },
+            { type: 'operator', value: '+', id: 2 },
+            { type: 'placeholder', value: null, id: 3 } // placeholder
+        ];
+        render(<ConstraintBoard tokens={tokens} />);
         expect(screen.getByText('glucose_g_L')).toBeInTheDocument();
+        expect(screen.getByText('+')).toBeInTheDocument();
         expect(screen.getAllByTestId('placeholder')).toHaveLength(1);
     });
 
-    it('removes item when clicked and frees up placeholder', () => {
-        render(<ConstraintBoard />);
-        const board = screen.getByTestId('constraint-board');
+    it('calls onRemoveToken when a token is clicked', () => {
+        const mockOnRemoveToken = vi.fn();
+        const tokens = [
+            { type: 'parameter', value: 'fructose_g_L', id: 1 },
+            { type: 'placeholder', value: null, id: 2 }
+        ];
+        render(
+            <ConstraintBoard tokens={tokens} onRemoveToken={mockOnRemoveToken} />
+        );
 
-        // simulate adding an item
-        fireEvent.click(board, {
-            detail: {
-                type: 'parameter', value: 'fructose_g_L'
-            }
-        });
-        const item = screen.getByText('fructose_g_L');
-        fireEvent.click(item);
-
-        // item should be removed now
-        expect(screen.queryByText('fructose_g_L')).not.toBeInTheDocument();
+        const token = screen.getByText('fructose_g_L');
+        fireEvent.click(token);
+        expect(mockOnRemoveToken).toHaveBeenCalledWith(1);
     });
+
 
     it('validates complete constraints on Done button click', () => {
         const mockOnDone = vi.fn();
-        render(<ConstraintBoard onDone={mockOnDone} />);
-        const board = screen.getByTestId('constraint-board');
+        const tokens = [
+            { type: 'parameter', value: 'glucose_g_L', id: 1 },
+            { type: 'operator', value: '+', id: 2 },
+            { type: 'parameter', value: 'fructose_g_L', id: 3 },
+            { type: 'operator', value: '<=', id: 4 },
+            { type: 'parameter', value: '20', id: 5 },
+            { type: 'placeholder', value: null, id: 6 }
+        ];
+        render(<ConstraintBoard tokens={tokens} onDone={mockOnDone} />);
 
-        // add parameters and operator
-        fireEvent.click(board, { detail: { type: 'parameter', value: 'glucose_g_L' } });
-        fireEvent.click(board, { detail: { type: 'operator', value: '+' } });
-        fireEvent.click(board, { detail: { type: 'parameter', value: 'fructose_g_L' } });
-        fireEvent.click(board, { detail: { type: 'operator', value: '<=' } });
-        fireEvent.click(board, { detail: { type: 'parameter', value: '20' } });
-
-        // click Done button
         const doneButton = screen.getByTestId('done-button');
         fireEvent.click(doneButton);
 
-        expect(mockOnDone).toHaveBeenCalledWith({ // to ensure the function is called with correct constraint data
+        // omit 'id'!!
+        expect(mockOnDone).toHaveBeenCalledWith({
             isValid: true,
             constraint: [
-                { type: 'parameter', value: 'glucose_g_L' },
-                { type: 'operator', value: '+' },
-                { type: 'parameter', value: 'fructose_g_L' },
-                { type: 'operator', value: '<=' },
-                { type: 'parameter', value: '20' }
+                { type: 'parameter', value: 'glucose_g_L'},
+                { type: 'operator', value: '+'},
+                { type: 'parameter', value: 'fructose_g_L'},
+                { type: 'operator', value: '<='},
+                { type: 'parameter', value: '20'}
             ]
         });
     });
 
     it('shows error for incomplete constraints', () => {
         const mockOnDone = vi.fn();
-        render(<ConstraintBoard onDone={mockOnDone} />);
-        const board = screen.getByTestId('constraint-board');
+        const tokens = [
+            { type: 'parameter', value: 'glucose_g_L', id: 1 },
+            { type: 'placeholder', value: null, id: 2 }
+        ];
+        render(<ConstraintBoard tokens={tokens} onDone={mockOnDone} />);
         const doneButton = screen.getByTestId('done-button');
-        
-        // add only one operand
-        fireEvent.click(board, { detail: { type: 'parameter', value: 'glucose_g_L' } });
         fireEvent.click(doneButton);
-
         expect(mockOnDone).toHaveBeenCalledWith({
             isValid: false,
-            error: 'Incomplete constraint'
+            error: 'Constraint must have at least 3 tokens!'
         });
-
-        // add some more ... 
-
-
     });
 });

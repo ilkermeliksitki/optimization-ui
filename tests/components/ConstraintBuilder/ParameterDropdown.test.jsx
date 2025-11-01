@@ -33,11 +33,8 @@ describe('Parameter Dropdown', () => {
         fireEvent.change(dropdown, { target: { value: 'fructose_g_L' } });
 
         // dropdown should reset
-        expect(dropdown.value).toBe('glucose_g_L'); // current assumption: default is glucose_g_L
+        expect(dropdown.value).toBe('');
         
-    });
-    
-    it('', () => {
     });
 });
 
