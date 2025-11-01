@@ -15,7 +15,7 @@ export default function App() {
         setTokens((prev) => {
             // find first placeholder index
             const placeholderIndex = prev.findIndex(t => t.type === 'placeholder');
-            if (placeholderIndex === -1) {
+            if (placeholderIndex !== -1) {
                 const newTokens = [...prev];
 
                 // replace placeholder with new token
@@ -38,7 +38,7 @@ export default function App() {
     // handler for removing tokens (clicked on board) by converting it back to a placeholder
     const handleRemoveToken = (id) => {
         setTokens((prev) => {
-            prev.map(t => {
+            return prev.map(t => {
                 if (t.id === id) {
                     return { type: 'placeholder', value: null, id: t.id };
                 }
