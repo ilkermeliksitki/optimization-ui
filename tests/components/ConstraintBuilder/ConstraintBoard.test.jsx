@@ -2,15 +2,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ConstraintBoard from '@/components/ConstraintBuilder/ConstraintBoard.jsx';
 
-describe('Empty Board Initialization', () => {
+describe('Constraint Board', () => {
     it('initializes with one empty placeholder', () => {
         render(<ConstraintBoard />);
         const placeholders = screen.getAllByTestId('placeholder');
         expect(placeholders).toHaveLength(1);
     });
-});
 
-describe('Auto-Fill Next Placeholder', () => {
     it('adds item to the next available placeholder', () => {
         render(<ConstraintBoard />);
         const board = screen.getByTestId('constraint-board');
@@ -24,9 +22,7 @@ describe('Auto-Fill Next Placeholder', () => {
         expect(screen.getByText('glucose_g_L')).toBeInTheDocument();
         expect(screen.getAllByTestId('placeholder')).toHaveLength(1);
     });
-});
 
-describe('Remove Item by Click', () => {
     it('removes item when clicked and frees up placeholder', () => {
         render(<ConstraintBoard />);
         const board = screen.getByTestId('constraint-board');
@@ -43,9 +39,7 @@ describe('Remove Item by Click', () => {
         // item should be removed now
         expect(screen.queryByText('fructose_g_L')).not.toBeInTheDocument();
     });
-});
 
-describe('Constraint Validation', () => {
     it('validates complete constraints on Done button click', () => {
         const mockOnDone = vi.fn();
         render(<ConstraintBoard onDone={mockOnDone} />);
