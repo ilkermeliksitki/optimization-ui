@@ -1,42 +1,229 @@
-#root {
-  max-width: 1280px;
+body {
+  background-color: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.app-container {
+  max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.app-container h1 {
   text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.operator-bar {
+  padding: 1rem;
+  border: 2px solid #333;
+  margin-bottom: 1rem;
+  background-color: #f5f5f5;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.operator-bar h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.operator-button {
+  margin: 0.25rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border: 1px solid #666;
+  background-color: #fff;
+  border-radius: 4px;
 }
 
-.card {
-  padding: 2em;
+.operator-button:hover {
+  background-color: #e0e0e0;
 }
 
-.read-the-docs {
-  color: #888;
+.parameter-dropdown {
+  padding: 1rem;
+  border: 2px solid #333;
+  margin-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.parameter-dropdown label {
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.parameter-dropdown select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  min-width: 200px;
+}
+
+.value-input {
+  padding: 1rem;
+  border: 2px solid #333;
+  margin-bottom: 1rem;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.value-input label {
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+.value-input input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  min-width: 200px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  flex: 1; /* take the remaining space */
+}
+
+.value-input input:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.add-value-button {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  background-color: #FF9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.add-value-button:hover {
+  background-color: #F57C00;
+}
+
+
+.add-value-button:active {
+  transform: translateY(1px);
+}
+
+.constraint-board {
+  padding: 1rem;
+  border: 2px solid #333;
+  background-color: #fafafa;
+  min-height: 100px;
+}
+
+.tokens-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 50px;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px dashed #999;
+}
+
+.token {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.token-placeholder {
+  background-color: #f0f0f0;
+  color: #999;
+  border: 2px dashed #ccc;
+  cursor: default;
+}
+
+.token-parameter {
+  background-color: #4CAF50;
+  color: white;
+  border: 2px solid #45a049;
+}
+
+.token-operator {
+  background-color: #2196F3;
+  color: white;
+  border: 2px solid #0b7dda;
+}
+
+.token-value {
+  background-color: #FF9800;
+  color: white;
+  border: 2px solid #e68900;
+}
+
+.done-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #9C27B0;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.done-button:hover {
+  background-color: #7B1FA2;
+}
+
+.saved-constraints {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #e8f5e9;
+  border: 2px solid #4CAF50;
+  border-radius: 4px;
+}
+
+.saved-constraints h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #2e7d32;
+}
+
+.saved-constraint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #a5d6a7;
+}
+
+.constraint-display {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.delete-button {
+  padding: 0.5rem 1rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+h2 {
+  color: #333;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
 }
