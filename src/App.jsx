@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
 import './App.css';
-import ConstraintBoard from '@/components/ConstraintBuilder/ConstraintBoard.jsx';
-import OperatorBar from '@/components/ConstraintBuilder/OperatorBar.jsx';
-import ParameterDropdown from '@/components/ConstraintBuilder/ParameterDropdown.jsx';
-import ValueInput from '@/components/ConstraintBuilder/ValueInput.jsx';
+import Stepper from '@/components/Stepper/Stepper.jsx';
+import MultiStepForm from '@/components/MultiStepForm/MultiStepForm.jsx';
+import ConstraintBuilderStep from '@/components/Steps/ConstraintBuilderStep.jsx';
+import ObjectiveBuilderStep from '@/components/Steps/ObjectiveBuilderStep.jsx';
+import ReviewStep from '@/components/Steps/ReviewStep.jsx';
 
 export default function App() {
-    // store all saved constraint
+    const [currentStep, setCurrentStep] = useState(0);
     const [savedConstraints, setSavedConstraints] = useState([]);
-
-    // store current tokens on the ConstraintBoard
+    const [savedObjectives, setSavedObjectives] = useState([]);
     const [tokens, setTokens] = useState([
         { type: 'placeholder', value: null, id: 1 },
     ]);
     const [nextId, setNextId] = useState(2);
 
-    // handler for adding tokens to the ConstraintBoard from the OperatorBar or ParameterDropdown
+    const availableOutputs = ['growth_rate_h-1', 'titer_g_L', 'yield_percent'];
+
+    const steps = [
+        { title: 'Constraints', description: 'Define constraints' },
+        { title: 'Objectives', description: 'Set optimization goals' },
+        { title: 'Review', description: 'Review and submit' }
+    ];
+
+    // Constraint handlers
     const handleAddToken = (tokenData) => {
         setTokens((prev) => {
             // find first placeholder index
@@ -24,7 +32,6 @@ export default function App() {
                 const newTokens = [...prev];
                 // replace placeholder with new token
                 newTokens[placeholderIndex] = { ...tokenData, id: nextId };
-
                 // only add new placeholder if there isn't one already
                 const hasPlaceholder = newTokens.some(t => t.type === 'placeholder');
                 if (!hasPlaceholder) {
@@ -43,32 +50,26 @@ export default function App() {
     const handleRemoveToken = (id) => {
         setTokens((prev) => {
             const newTokens = prev.map(t =>
-                t.id === id
-                ? { type: 'placeholder', value: null, id: t.id }
-                : t
+                t.id === id ? { type: 'placeholder', value: null, id: t.id } : t
             );
-
             // clean the extra placeholders. keep only one at the end
             const placeholderIndices = [];
             newTokens.forEach((t, idx) => {
-                if (t.type === 'placeholder') {
+                if (t.type === 'placeholder')
                     placeholderIndices.push(idx);
-                }
             });
-
             // if multiple placeholders, remove all except the last one
             if (placeholderIndices.length > 1) {
-                const filtered = newTokens.filter((t, idx) => {
+                return newTokens.filter((t, idx) => {
                     if (t.type === 'placeholder') {
                         return idx === placeholderIndices[placeholderIndices.length - 1];
                     }
                     return true;
                 });
-                return filtered;
             }
             return newTokens;
         });
-    }
+    };
 
     // handler for operator click (wrappper)
     const handleOperatorClick = (operator) => {
@@ -84,7 +85,6 @@ export default function App() {
         handleAddToken({ type: 'value', value: value });
     };
 
-    // handler for Done button click
     const handleDone = (result) => {
         if (result.isValid) {
             // save the constraint
@@ -93,12 +93,10 @@ export default function App() {
             // reset the constraint board
             setTokens([{ type: 'placeholder', value: null, id: nextId }]);
             setNextId(nextId + 1);
-
-            alert('Constraint saved: ' + JSON.stringify(result.constraint));
+            alert('✅ Constraint added successfully!');
         } else {
-            alert('Invalid constraint. Please complete the expression.');
+            alert(`❌ Invalid constraint: ${result.error}`);
         }
-        // TODO: send to backend simulation (will be mocked)
     };
 
     const handleDeleteConstraint = (index) => {
@@ -113,73 +111,103 @@ export default function App() {
         let currentId = nextId;
         const loadedTokens = constraintToEdit.map(token => {
             const newToken = { ...token, id: currentId };
-            currentId += 1;
+            currentId++;
             return newToken;
         });
 
         // add a placeholder at the end
         loadedTokens.push({ type: 'placeholder', value: null, id: currentId });
-        currentId += 1;
+        currentId++;
 
         // set tokens
         setTokens(loadedTokens);
         setNextId(currentId);
+        setSavedConstraints(prev => prev.filter((_, i) => i !== index));
+    };
 
-        // remove from saved constraints
-        setSavedConstraints((prev) => prev.filter((_, idx) => idx !== index));
+    // Objective handlers
+    const handleAddObjective = (objective) => {
+        setSavedObjectives(prev => [...prev, objective]);
+        alert(`✅ Objective added: ${objective.type} ${objective.parameter}`);
+    };
+
+    const handleDeleteObjective = (index) => {
+        setSavedObjectives(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleSubmit = (response) => {
+        console.log('Simulation response:', response);
     };
 
     return (
-        <div className="app-container">
-            <h1>Constraint Builder</h1>
-            <OperatorBar onOperatorClick={handleOperatorClick} />
-            <ParameterDropdown onParameterSelect={handleParameterSelect} />
-            <ValueInput onValueSubmit={handleValueSubmit} />
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-6xl mx-auto px-4">
+                <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">
+                    Bioprocess Optimization Builder
+                </h1>
 
-            { /* show saved constraints */ }
-            {savedConstraints.length > 0 && (
-                <div className="saved-constraints">
-                    <h2>Saved Constraints:</h2>
-                    {savedConstraints.map((constraint, idx) => (
-                        <div key={idx} className="saved-constraint">
-                            <div className="constraint-display">
-                                {constraint.map((token, tokenIdx) => (
-                                    <span
-                                        key={tokenIdx}
-                                        className={`token token-${token.type}`}
-                                    >
-                                        {token.value}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="constraint-actions">
-                                <button
-                                    onClick={() => handleEditConstraint(idx)}
-                                    className="edit-button"
-                                    data-testid={`edit-constraint-${idx}`}
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteConstraint(idx)}
-                                    className="delete-button"
-                                    data-testid={`delete-constraint-${idx}`}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                <Stepper steps={steps} currentStep={currentStep} />
+
+                <div className="mt-8">
+                    {currentStep === 0 && (
+                        <ConstraintBuilderStep
+                            tokens={tokens}
+                            savedConstraints={savedConstraints}
+                            onOperatorClick={handleOperatorClick}
+                            onParameterSelect={handleParameterSelect}
+                            onValueSubmit={handleValueSubmit}
+                            onRemoveToken={handleRemoveToken}
+                            onDone={handleDone}
+                            onEditConstraint={handleEditConstraint}
+                            onDeleteConstraint={handleDeleteConstraint}
+                        />
+                    )}
+
+                    {currentStep === 1 && (
+                        <ObjectiveBuilderStep
+                            savedObjectives={savedObjectives}
+                            availableOutputs={availableOutputs}
+                            onAddObjective={handleAddObjective}
+                            onDeleteObjective={handleDeleteObjective}
+                        />
+                    )}
+
+                    {currentStep === 2 && (
+                        <ReviewStep
+                            savedConstraints={savedConstraints}
+                            savedObjectives={savedObjectives}
+                            goToStep={setCurrentStep}
+                            onSubmit={handleSubmit}
+                        />
+                    )}
                 </div>
-            )}
 
-            { /* current working constraint board */ }
-            <h2>Current Constraint:</h2>
-            <ConstraintBoard
-                tokens={tokens}
-                onRemoveToken={handleRemoveToken}
-                onDone={handleDone}
-            />
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                    <button
+                        onClick={() => setCurrentStep(currentStep - 1)}
+                        disabled={currentStep === 0}
+                        data-testid="back-button"
+                        className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-all ${
+                            currentStep === 0
+                                ? 'invisible'
+                                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                        }`}
+                    >
+                        ← Back
+                    </button>
+
+                    {currentStep < 2 && (
+                        <button
+                            onClick={() => setCurrentStep(currentStep + 1)}
+                            data-testid="next-button"
+                            className="flex items-center gap-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all"
+                        >
+                            Next →
+                        </button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
