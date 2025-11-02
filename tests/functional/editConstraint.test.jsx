@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import App from '@/App.jsx';
 
 describe('Edit Saved Constraint', () => {
-    it('allow editing a saved constraint', async () => {
+    it('allows editing a saved constraint', () => {
         render(<App />);
         // build a constraint
         const paramDropdown = screen.getByTestId('parameter-dropdown');
@@ -21,13 +21,15 @@ describe('Edit Saved Constraint', () => {
         // save constraint
         fireEvent.click(doneButton);
 
-        // verify constraint is saved in the "Saved Constraints" section
-        const savedSection = screen.getByText('Saved Constraints:').closest('.saved-constraints');
-        expect(savedSection).toBeInTheDocument();
+        // verify constraint is saved - use the exact heading from the new component
+        const savedHeading = screen.getByRole('heading', { name: /Saved Constraints:/i });
+        expect(savedHeading).toBeInTheDocument();
 
-        // use within to search only inside the saved constraints section
-        const savedConstraint = within(savedSection).getByText('glucose_g_L');
-        expect(savedConstraint).toBeInTheDocument();
+        // find the saved constraint section
+        const savedSection = savedHeading.closest('div');
+
+        // use within() to search only inside saved constraints section
+        expect(within(savedSection).getByText('glucose_g_L')).toBeInTheDocument();
         expect(within(savedSection).getByText('<=')).toBeInTheDocument();
         expect(within(savedSection).getByText('33')).toBeInTheDocument();
 
@@ -48,7 +50,6 @@ describe('Edit Saved Constraint', () => {
         expect(within(board).getByText('33')).toBeInTheDocument();
 
         // saved constraint section should no longer have this constraint
-        expect(screen.queryByText('Saved Constraints')).not.toBeInTheDocument();
+        expect(screen.queryByRole('heading', { name: /Saved Constraints:/i })).not.toBeInTheDocument();
     });
-
 });
