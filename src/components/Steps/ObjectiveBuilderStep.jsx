@@ -19,17 +19,26 @@ export default function ObjectiveBuilderStep({
             />
 
             {savedObjectives.length > 0 && (
-                <div className="saved-objectives">
-                    <h2>Saved Objectives</h2>
+                <div className="saved-objectives p-6 bg-orange-50 border-2 border-orange-500 rounded-lg">
+                    <h2 className="text-xl font-bold text-orange-800 mb-4">
+                        Saved Objectives
+                    </h2>
                     {savedObjectives.map((objective, idx) => (
-                        <div key={idx} className="saved-objective">
-                            <div className="objective-display">
-                                <span className="objective-type">{objective.type}</span>
-                                <span className="objective-parameter">{objective.parameter}</span>
+                        <div
+                            key={idx}
+                            className="saved-objective flex justify-between items-center p-4 bg-white rounded-lg border border-orange-200"
+                        >
+                            <div className="objective-display flex gap-3 items-center">
+                                <span className="objective-type px-4 py-2 text-amber-700 font-bold text-sm uppercase">
+                                    {objective.type}
+                                </span>
+                                <span className="objective-parameter px-4 py-2 bg-orange-100 text-orange-800 border-2 border-orange-600 rounded font-bold">
+                                    {objective.parameter}
+                                </span>
                             </div>
                             <button
                                 onClick={() => onDeleteObjective(idx)}
-                                className="delete-button"
+                                className="delete-button px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                                 data-testid={`delete-objective-${idx}`}
                             >
                                 Delete 
