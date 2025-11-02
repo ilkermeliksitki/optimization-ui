@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ObjectiveBuilderStep from '@/components/Steps/ObjectiveBuilderStep.jsx';
 
@@ -45,8 +45,8 @@ describe('ObjectiveBuilderStep Component', () => {
                 onDeleteObjective={vi.fn()}
             />
         );
-
-        expect(screen.queryByRole('heading', { name: /Saved Objectives:/i })).not.toBeInTheDocument();
+        const heading = screen.queryByRole('heading', { name: /Saved Objectives/i });
+        expect(heading).not.toBeInTheDocument();
     });
 
     it('renders saved objectives', () => {
@@ -58,12 +58,14 @@ describe('ObjectiveBuilderStep Component', () => {
                 onDeleteObjective={vi.fn()}
             />
         );
+        const heading = screen.getByRole('heading', { name: /Saved Objectives/i })
+        expect(heading).toBeInTheDocument();
 
-        expect(screen.getByRole('heading', { name: /Saved Objectives:/i })).toBeInTheDocument();
-        expect(screen.getByText('maximize')).toBeInTheDocument();
-        expect(screen.getByText('minimize')).toBeInTheDocument();
-        expect(screen.getByText('titer_g_L')).toBeInTheDocument();
-        expect(screen.getByText('cost_usd')).toBeInTheDocument();
+        const savedSection = heading.closest('.saved-objectives');
+        expect(within(savedSection).getByText('maximize')).toBeInTheDocument();
+        expect(within(savedSection).getByText('minimize')).toBeInTheDocument();
+        expect(within(savedSection).getByText('titer_g_L')).toBeInTheDocument();
+        expect(within(savedSection).getByText('cost_usd')).toBeInTheDocument();
     });
 
     it('render deletes button for each objectives', () => {
@@ -97,7 +99,7 @@ describe('ObjectiveBuilderStep Component', () => {
         expect(mockDelete).toHaveBeenCalledWith(0);
     });
 
-    it('display multiple objectives in order', () => {
+    it('displays multiple objectives in order', () => {
         render(
             <ObjectiveBuilderStep
                 savedObjectives={mockObjectives}
@@ -107,7 +109,10 @@ describe('ObjectiveBuilderStep Component', () => {
             />
         );
 
-        const objectives = screen.getAllByText(/maximize|minimize/);
+        const heading = screen.getByRole('heading', { name: /Saved Objectives/i })
+        const savedSection = heading.closest('.saved-objectives');
+
+        const objectives = within(savedSection).getAllByText(/maximize|minimize/);
         expect(objectives).toHaveLength(2);
     });
 
