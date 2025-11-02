@@ -105,6 +105,30 @@ export default function App() {
         setSavedConstraints((prev) => prev.filter((_, idx) => idx !== index));
     };
 
+    const handleEditConstraint = (index) => {
+        // get the constraint to edit
+        const constraintToEdit = savedConstraints[index];
+
+        // convert constraint back to tokens with ids
+        let currentId = nextId;
+        const loadedTokens = constraintToEdit.map(token => {
+            const newToken = { ...token, id: currentId };
+            currentId += 1;
+            return newToken;
+        });
+
+        // add a placeholder at the end
+        loadedTokens.push({ type: 'placeholder', value: null, id: currentId });
+        currentId += 1;
+
+        // set tokens
+        setTokens(loadedTokens);
+        setNextId(currentId);
+
+        // remove from saved constraints
+        setSavedConstraints((prev) => prev.filter((_, idx) => idx !== index));
+    };
+
     return (
         <div className="app-container">
             <h1>Constraint Builder</h1>
@@ -128,12 +152,22 @@ export default function App() {
                                     </span>
                                 ))}
                             </div>
-                            <button
-                                onClick={() => handleDeleteConstraint(idx)}
-                                className="delete-button"
-                            >
-                                Delete
-                            </button>
+                            <div className="constraint-actions">
+                                <button
+                                    onClick={() => handleEditConstraint(idx)}
+                                    className="edit-button"
+                                    data-testid={`edit-constraint-${idx}`}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteConstraint(idx)}
+                                    className="delete-button"
+                                    data-testid={`delete-constraint-${idx}`}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>

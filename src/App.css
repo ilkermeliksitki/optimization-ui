@@ -177,12 +177,15 @@ body {
   background-color: #7B1FA2;
 }
 
-.saved-constraints {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background-color: #e8f5e9;
-  border: 2px solid #4CAF50;
+.saved-constraint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: white;
   border-radius: 4px;
+  border: 1px solid #a5d6a7;
 }
 
 .saved-constraints h2 {
@@ -206,6 +209,27 @@ body {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  flex: 1;
+}
+
+.constraint-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-button {
+  padding: 0.5rem 1rem;
+  background-color: #BBC863;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+.edit-button:hover {
+  background-color: #1976D2;
 }
 
 .delete-button {
