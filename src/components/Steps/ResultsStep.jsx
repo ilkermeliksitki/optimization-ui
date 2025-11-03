@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, XCircle, TrendingUp, Activity } from 'lucide-react';
+import ConvergencePlot from '@/components/Charts/ConvergencePlot.jsx';
 
 export default function ResultsStep({ results, goToStep }) {
     // for missing results
@@ -127,15 +128,8 @@ export default function ResultsStep({ results, goToStep }) {
                 <h3 className="text-xl font-bold text-gray-800 mb-4">
                     Convergence Plot
                 </h3>
-                <div
-                    data-testid="convergence-chart"
-                    className="h-64 bg-gray-50 rounded flex items-center justify-center border-2 border-dashed border-gray-300"
-                >
-                    <p className="text-gray-500">
-                        Chart will be rendered here (Phase 4)
-                    </p>
-                </div>
-            </div>
+                <ConvergencePlot data={convergenceData} />
+           </div>
 
             {/* action buttons */}
             <div className="flex gap-4 justify-center pt-6">
