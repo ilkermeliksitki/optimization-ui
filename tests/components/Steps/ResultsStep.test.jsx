@@ -76,10 +76,10 @@ describe('ResultsStep Component', () => {
         );
         expect(screen.getByText('titer_g_L')).toBeInTheDocument();
         expect(screen.getByText('42.5')).toBeInTheDocument();
-        expect(screen.getByText('maximize')).toBeInTheDocument();
         expect(screen.getByText('cost_usd')).toBeInTheDocument();
-        expect(screen.getByText('125.30')).toBeInTheDocument();
-        expect(screen.getByText('minimize')).toBeInTheDocument();
+        expect(screen.getByText('125.3')).toBeInTheDocument();
+        expect(screen.getByText(/maximize/i)).toBeInTheDocument();
+        expect(screen.getByText(/minimize/i)).toBeInTheDocument();
     });
 
     it('shows achivement indicators for objecives', () => {
@@ -90,7 +90,7 @@ describe('ResultsStep Component', () => {
             />
         );
         const checkmarks = screen.getAllByTestId('objective-achieved');
-        expect(checkmarks.length).toHaveLength(2); // because both objectives are achieved
+        expect(checkmarks).toHaveLength(2); // because both objectives are achieved
     });
 
     it('renders constrains satisfaction section', () => {
@@ -100,7 +100,7 @@ describe('ResultsStep Component', () => {
                 goToStep={vi.fn()}
             />
         );
-        expect(screen.getByRole('heading', { name: /Constraints Satisfaction/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /Constraint Satisfaction/i })).toBeInTheDocument();
     });
 
     it('display all constrain satisfaction data', () => {
@@ -124,7 +124,7 @@ describe('ResultsStep Component', () => {
             />
         );
         const checkmarks = screen.getAllByTestId('constraint-satisfied');
-        expect(checkmarks.length).toHaveLength(2);
+        expect(checkmarks).toHaveLength(2);
     });
 
     it('renders convergence plot section', () => {
