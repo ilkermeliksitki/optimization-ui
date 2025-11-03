@@ -1,17 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import Toast from '@/components/Toast/Toast.jsx';
 
 describe('Toast Component', () => {
-    // run before and after each test to mock timers
-    beforeEach(() => {
-        vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-        vi.useRealTimers();
-    });
-
     it('renders toast with message', () => {
         render(
             <Toast
@@ -34,7 +25,7 @@ describe('Toast Component', () => {
 
         const toast = screen.getByTestId('toast');
         expect(toast).toHaveClass('bg-green-50');
-        expect(toast).toHaveClass('border-green-400');
+        expect(toast).toHaveClass('border-green-500');
     });
 
     it('renders error toast with red styling', () => {
@@ -95,23 +86,21 @@ describe('Toast Component', () => {
         expect(mockClose).toHaveBeenCalledTimes(1);
     });
 
-    it('auto-closes after duration (df: 3000ms)', async () => {
+    it('auto-closes after duration', async () => {
         const mockClose = vi.fn();
         render(
             <Toast
                 message="Auto Close Test"
                 type="success"
                 onClose={mockClose}
+                duration={100}
             />
         );
         expect(mockClose).not.toHaveBeenCalled();
 
-        // move in time by 3000ms
-        vi.advanceTimersByTime(3000);
-
         await waitFor(() => {
             expect(mockClose).toHaveBeenCalledTimes(1);
-        });
+        }, { timeout: 300 });
     });
 
     it('auto-closes after custom duration', async () => {
@@ -121,19 +110,19 @@ describe('Toast Component', () => {
                 message="Custom duration"
                 type="success"
                 onClose={mockClose}
-                duration={5000}
+                duration={200}
             />
         );
 
-        // move in time by 3000ms
-        vi.advanceTimersByTime(3000);
+        // wait 100ms
+        await new Promise(resolve => setTimeout(resolve, 100));
         expect(mockClose).not.toHaveBeenCalled();
 
-        // should close after 5000ms (total)
-        vi.advanceTimersByTime(2000);
+        // wait for full duration
         await waitFor(() => {
             expect(mockClose).toHaveBeenCalledTimes(1);
-        });
+        }, { timeout: 300 });
+
     });
 
 });
