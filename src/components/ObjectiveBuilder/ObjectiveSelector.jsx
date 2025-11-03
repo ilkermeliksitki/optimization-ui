@@ -56,7 +56,7 @@ export default function ObjectiveSelector({ outputs, onAddObjective }) {
                         htmlFor="objective-parameter"
                         className="text-sm font-semibold text-gray-700"
                     >
-                        Parameter (KPI):
+                        Parameter:
                     </label>
                     <select
                         id="objective-parameter"
