@@ -7,19 +7,28 @@ import ReviewStep from '@/components/Steps/ReviewStep.jsx';
 import ResultsStep from '@/components/Steps/ResultsStep.jsx';
 import ProgressModal from '@/components/ProgressModal/ProgressModal.jsx';
 import { useToast } from '@/contexts/ToastContext.jsx';
+import { useConstraintBuilder } from '@/hooks/useConstraintBuilder.js';
 import { runMockSimulation } from '@/utils/mockSimulation.js';
 
 export default function App() {
     const { showToast } = useToast();
     const [currentStep, setCurrentStep] = useState(0);
-    const [savedConstraints, setSavedConstraints] = useState([]);
     const [savedObjectives, setSavedObjectives] = useState([]);
-    const [tokens, setTokens] = useState([
-        { type: 'placeholder', value: null, id: 1 },
-    ]);
-    const [nextId, setNextId] = useState(2);
 
-    // simulation state
+    // hook for constraint builder
+    const {
+        savedConstraints,
+        tokens,
+        handleOperatorClick,
+        handleParameterSelect,
+        handleValueSubmit,
+        handleRemoveToken,
+        handleDone,
+        handleDeleteConstraint,
+        handleEditConstraint,
+    } = useConstraintBuilder();
+
+    // Simulation state
     const [isSimulating, setIsSimulating] = useState(false);
     const [simulationProgress, setSimulationProgress] = useState(0);
     const [simulationResults, setSimulationResults] = useState(null);
@@ -32,108 +41,6 @@ export default function App() {
         { title: 'Review', description: 'Review and submit' },
         { title: 'Results', description: 'View simulation results' }
     ];
-
-    // Constraint handlers
-    const handleAddToken = (tokenData) => {
-        setTokens((prev) => {
-            // find first placeholder index
-            const placeholderIndex = prev.findIndex(t => t.type === 'placeholder');
-            if (placeholderIndex !== -1) {
-                const newTokens = [...prev];
-                // replace placeholder with new token
-                newTokens[placeholderIndex] = { ...tokenData, id: nextId };
-                // only add new placeholder if there isn't one already
-                const hasPlaceholder = newTokens.some(t => t.type === 'placeholder');
-                if (!hasPlaceholder) {
-                    newTokens.push({ type: 'placeholder', value: null, id: nextId + 1 });
-                    setNextId(nextId => nextId + 2);
-                } else {
-                    setNextId(nextId => nextId + 1);
-                }
-                return newTokens;
-            }
-            return prev;
-        });
-    };
-
-    // handler for removing tokens (clicked on board) by converting it back to a placeholder
-    const handleRemoveToken = (id) => {
-        setTokens((prev) => {
-            const newTokens = prev.map(t =>
-                t.id === id ? { type: 'placeholder', value: null, id: t.id } : t
-            );
-            // clean the extra placeholders. keep only one at the end
-            const placeholderIndices = [];
-            newTokens.forEach((t, idx) => {
-                if (t.type === 'placeholder')
-                    placeholderIndices.push(idx);
-            });
-            // if multiple placeholders, remove all except the last one
-            if (placeholderIndices.length > 1) {
-                return newTokens.filter((t, idx) => {
-                    if (t.type === 'placeholder') {
-                        return idx === placeholderIndices[placeholderIndices.length - 1];
-                    }
-                    return true;
-                });
-            }
-            return newTokens;
-        });
-    };
-
-    const handleOperatorClick = (operator) => {
-        handleAddToken({ type: 'operator', value: operator });
-    };
-
-    const handleParameterSelect = (parameter) => {
-        handleAddToken({ type: 'parameter', value: parameter });
-    };
-
-    const handleValueSubmit = (value) => {
-        handleAddToken({ type: 'value', value: value });
-    };
-
-    const handleDone = (result) => {
-        if (result.isValid) {
-            // save the constraint
-            setSavedConstraints(prev => [...prev, result.constraint]);
-
-            // reset the constraint board
-            setTokens([{ type: 'placeholder', value: null, id: nextId }]);
-            setNextId(nextId + 1);
-            showToast('Constraint added successfully!', 'success');
-        } else {
-            showToast(`Invalid constraint: ${result.error}`, 'error');
-        }
-    };
-
-    const handleDeleteConstraint = (index) => {
-        setSavedConstraints((prev) => prev.filter((_, idx) => idx !== index));
-        showToast('Constraint deleted', 'info');
-    };
-
-    const handleEditConstraint = (index) => {
-        // get the constraint to edit
-        const constraintToEdit = savedConstraints[index];
-
-        // convert constraint back to tokens with ids
-        let currentId = nextId;
-        const loadedTokens = constraintToEdit.map((token) => {
-            const newToken = { ...token, id: currentId };
-            currentId++;
-            return newToken;
-        });
-
-        // add a placeholder at the end
-        loadedTokens.push({ type: 'placeholder', value: null, id: currentId });
-        currentId++;
-
-        // set tokens
-        setTokens(loadedTokens);
-        setNextId(currentId);
-        setSavedConstraints(prev => prev.filter((_, i) => i !== index));
-        showToast('Constraint loaded for editing', 'info');
-    };
 
     // Objective handlers
     const handleAddObjective = (objective) => {
@@ -260,7 +167,6 @@ export default function App() {
                 </div>
             </div>
 
-            {/* Progress Modal */}
             <ProgressModal
                 isOpen={isSimulating}
                 progress={simulationProgress}
