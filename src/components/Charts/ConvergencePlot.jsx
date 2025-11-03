@@ -26,9 +26,6 @@ export default function ConvergencePlot({ data }) {
 
     return (
         <div data-testid="convergence-plot" className="w-full">
-            <h4 className="text-lg font-semibold text-gray-700 mb-4">
-                Convergence Plot
-            </h4>
             <ResponsiveContainer width="100%" height={300}>
                 <LineChart
                     data={data}
