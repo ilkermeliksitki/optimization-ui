@@ -93,8 +93,8 @@ export default function ReviewStep({
                     <div className="space-y-2">
                         {savedObjectives.map((objective, idx) => (
                             <div key={idx} className="flex gap-3 items-center p-3 bg-gray-50 rounded">
-                                <span className="objective-type">{objective.type}</span>
-                                <span className="objective-parameter">{objective.parameter}</span>
+                                <span className="objective-type px-4 py-2 text-amber-700 font-bold text-sm uppercase">{objective.type}</span>
+                                <span className="objective-parameter px-4 py-2 text-orange-800 font-bold">{objective.parameter}</span>
                             </div>
                         ))}
                     </div>
