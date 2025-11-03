@@ -135,7 +135,7 @@ describe('ResultsStep Component', () => {
             />
         );
         expect(screen.getByRole('heading', { name: /Convergence Plot/i })).toBeInTheDocument();
-        expect(screen.getByTestId('convergence-chart')).toBeInTheDocument();
+        expect(screen.getByTestId('convergence-plot')).toBeInTheDocument();
     });
 
     it('renders Edit Constraints button', () => {

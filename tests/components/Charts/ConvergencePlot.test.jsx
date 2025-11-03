@@ -24,12 +24,6 @@ describe('ConvergencePlot Component', () => {
         expect(container.querySelector('.recharts-responsive-container')).toBeInTheDocument();
     });
 
-    it('renders chart title', () => {
-        render(<ConvergencePlot data={mockData} />);
-
-        expect(screen.getByText(/Convergence Plot/i)).toBeInTheDocument();
-    });
-
     it('handles empty data gracefully', () => {
         render(<ConvergencePlot data={[]} />);
 
@@ -62,13 +56,5 @@ describe('ConvergencePlot Component', () => {
 
         const plot = screen.getByTestId('convergence-plot');
         expect(plot).toHaveClass('w-full');
-    });
-
-    it('shows title for non-empty data', () => {
-        render(<ConvergencePlot data={mockData} />);
-
-        const title = screen.getByText(/Convergence Plot/i);
-        expect(title).toHaveClass('text-lg');
-        expect(title).toHaveClass('font-semibold');
     });
 });
