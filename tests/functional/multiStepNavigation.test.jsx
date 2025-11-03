@@ -1,17 +1,26 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import App from '@/App.jsx';
+import { ToastProvider } from '@/contexts/ToastContext.jsx';
 
 describe('Multi-Step Form Navigation', () => {
     it('starts on Constraints step (Step 1)', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         expect(screen.getByText('Step 1: Define Constraints')).toBeInTheDocument();
         expect(screen.getByTestId('step-0')).toHaveAttribute('data-active', 'true');
     });
 
     it('shows Back button as invisible on first step', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         const backButton = screen.getByTestId('back-button');
         expect(backButton).toHaveClass('invisible');
@@ -19,7 +28,11 @@ describe('Multi-Step Form Navigation', () => {
     });
 
     it('navigates to Objectives step when Next clicked', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         const nextButton = screen.getByTestId('next-button');
         fireEvent.click(nextButton);
@@ -29,7 +42,11 @@ describe('Multi-Step Form Navigation', () => {
     });
 
     it('navigates back to Constraints when Back clicked', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         // Go to step 2
         fireEvent.click(screen.getByTestId('next-button'));
@@ -44,7 +61,11 @@ describe('Multi-Step Form Navigation', () => {
     });
 
     it('shows Review step as final step', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         // Navigate to step 2
         fireEvent.click(screen.getByTestId('next-button'));
@@ -57,7 +78,11 @@ describe('Multi-Step Form Navigation', () => {
     });
 
     it('hides Next button on final step', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         // Navigate to final step
         fireEvent.click(screen.getByTestId('next-button')); // Step 2
@@ -67,7 +92,11 @@ describe('Multi-Step Form Navigation', () => {
     });
 
     it('marks completed steps with checkmark', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         // Navigate to step 3
         fireEvent.click(screen.getByTestId('next-button'));
@@ -81,7 +110,11 @@ describe('Multi-Step Form Navigation', () => {
     });
 
     it('preserves constraint data when navigating between steps', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         
         // Add a constraint
         const paramDropdown = screen.getByTestId('parameter-dropdown');

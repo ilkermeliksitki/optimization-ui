@@ -1,10 +1,15 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import App from '@/App.jsx';
+import { ToastProvider } from '@/contexts/ToastContext.jsx';
 
 describe('Edit Saved Constraint', () => {
     it('allows editing a saved constraint', () => {
-        render(<App />);
+        render(
+            <ToastProvider>
+                <App />
+            </ToastProvider>
+        );
         // build a constraint
         const paramDropdown = screen.getByTestId('parameter-dropdown');
         const opButton = screen.getByText('<='); // TODO: change to data-testid
