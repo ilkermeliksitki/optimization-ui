@@ -215,7 +215,7 @@ export default function App() {
                                 : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                         }`}
                     >
-                        ← Back
+                        Back
                     </button>
 
                     {currentStep < 3 && (
@@ -224,7 +224,7 @@ export default function App() {
                             data-testid="next-button"
                             className="flex items-center gap-2 px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all"
                         >
-                            Next →
+                            Next
                         </button>
                     )}
                 </div>
