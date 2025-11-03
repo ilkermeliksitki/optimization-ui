@@ -17,7 +17,7 @@ export default function ParameterDropdown({ onParameterSelect }) {
         <div className="p-4 border-2 border-gray-300 rounded-lg bg-gray-50 mb-4">
             <label
                 htmlFor="parameter-select"
-                className="text-sm font-semibold text-gray-700 mr-2"
+                className="text-lg font-semibold text-gray-700 mr-2"
             >
                 Parameters:
             </label>

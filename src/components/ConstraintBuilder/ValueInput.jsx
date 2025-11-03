@@ -29,9 +29,9 @@ export default function ValueInput({ onValueSubmit }) {
         <div className="p-4 border-2 border-gray-300 rounded-lg bg-gray-50 mb-4 flex items-center gap-2">
             <label
                 htmlFor="value-input-field"
-                className="text-sm font-semibold text-gray-700"
+                className="text-lg font-semibold text-gray-700"
             >
-                Value:
+                Numeric Value:
             </label>
             <input
                 id="value-input-field"
