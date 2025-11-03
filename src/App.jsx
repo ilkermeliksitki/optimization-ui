@@ -5,8 +5,10 @@ import MultiStepForm from '@/components/MultiStepForm/MultiStepForm.jsx';
 import ConstraintBuilderStep from '@/components/Steps/ConstraintBuilderStep.jsx';
 import ObjectiveBuilderStep from '@/components/Steps/ObjectiveBuilderStep.jsx';
 import ReviewStep from '@/components/Steps/ReviewStep.jsx';
+import { useToast } from '@/contexts/ToastContext.jsx';
 
 export default function App() {
+    const { showToast } = useToast();
     const [currentStep, setCurrentStep] = useState(0);
     const [savedConstraints, setSavedConstraints] = useState([]);
     const [savedObjectives, setSavedObjectives] = useState([]);
@@ -93,14 +95,15 @@ export default function App() {
             // reset the constraint board
             setTokens([{ type: 'placeholder', value: null, id: nextId }]);
             setNextId(nextId + 1);
-            alert('✅ Constraint added successfully!');
+            showToast('Constraint added successfully!', 'success');
         } else {
-            alert(`❌ Invalid constraint: ${result.error}`);
+            showToast(`Invalid constraint: ${result.error}`, 'error');
         }
     };
 
     const handleDeleteConstraint = (index) => {
         setSavedConstraints((prev) => prev.filter((_, idx) => idx !== index));
+        showToast('Constraint deleted', 'info');
     };
 
     const handleEditConstraint = (index) => {
@@ -123,20 +126,23 @@ export default function App() {
         setTokens(loadedTokens);
         setNextId(currentId);
         setSavedConstraints(prev => prev.filter((_, i) => i !== index));
+        showToast('Constraint loaded for editing', 'info');
     };
 
     // Objective handlers
     const handleAddObjective = (objective) => {
         setSavedObjectives(prev => [...prev, objective]);
-        alert(`✅ Objective added: ${objective.type} ${objective.parameter}`);
+        showToast('Objective added successfully!', 'success');
     };
 
     const handleDeleteObjective = (index) => {
         setSavedObjectives(prev => prev.filter((_, i) => i !== index));
+        showToast('Objective deleted', 'info');
     };
 
     const handleSubmit = (response) => {
         console.log('Simulation response:', response);
+        showToast('Simulation submitted successfully!', 'success');
     };
 
     return (
