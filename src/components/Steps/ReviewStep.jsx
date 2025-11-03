@@ -122,6 +122,7 @@ export default function ReviewStep({
                 )}
 
                 {submitStatus === 'success' && (
+                    <>
                     <div className="flex items-center gap-3 p-4 bg-green-100 border-2 border-green-500 rounded-lg text-green-800">
                         <CheckCircle2 className="w-6 h-6" />
                         <div>
@@ -129,6 +130,14 @@ export default function ReviewStep({
                             <p className="text-sm">Results have been generated.</p>
                         </div>
                     </div>
+                    {/* add rerun button */}
+                    <button
+                         onClick={handleSubmit}
+                         className="ml-6 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm"
+                     >
+                         Rerun Simulation
+                     </button>
+                    </>
                 )}
 
                 {submitStatus === 'error' && (
