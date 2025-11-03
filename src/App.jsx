@@ -6,6 +6,7 @@ import ConstraintBuilderStep from '@/components/Steps/ConstraintBuilderStep.jsx'
 import ObjectiveBuilderStep from '@/components/Steps/ObjectiveBuilderStep.jsx';
 import ReviewStep from '@/components/Steps/ReviewStep.jsx';
 import { useToast } from '@/contexts/ToastContext.jsx';
+import ProgressModal from '@/components/ProgressModal/ProgressModal.jsx';
 
 export default function App() {
     const { showToast } = useToast();
@@ -16,6 +17,8 @@ export default function App() {
         { type: 'placeholder', value: null, id: 1 },
     ]);
     const [nextId, setNextId] = useState(2);
+    const [showProgress, setShowProgress] = useState(true);
+    const [progress, setProgress] = useState(0);
 
     const availableOutputs = ['growth_rate_h-1', 'titer_g_L', 'yield_percent'];
 
@@ -142,14 +145,14 @@ export default function App() {
 
     const handleSubmit = (response) => {
         console.log('Simulation response:', response);
-        showToast('Simulation submitted successfully!', 'success');
+        // showToast('Simulation submitted successfully!', 'success');
     };
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-6xl mx-auto px-4">
                 <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">
-                    Bioprocess Optimization Builder
+                    Microbial Optimization Builder
                 </h1>
 
                 <Stepper steps={steps} currentStep={currentStep} />
