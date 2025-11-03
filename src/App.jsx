@@ -25,7 +25,8 @@ export default function App() {
     const steps = [
         { title: 'Constraints', description: 'Define constraints' },
         { title: 'Objectives', description: 'Set optimization goals' },
-        { title: 'Review', description: 'Review and submit' }
+        { title: 'Review', description: 'Review and submit' },
+        { title: 'Results', description: 'View simulation results' }
     ];
 
     // Constraint handlers
@@ -189,6 +190,17 @@ export default function App() {
                             onSubmit={handleSubmit}
                         />
                     )}
+                    {/* reusults step coming soon */}
+                    {currentStep === 3 && (
+                        <div className="text-center p-12">
+                           <h2 className="text-2xl font-bold text-gray-800">
+                               Results Step Soon!
+                           </h2>
+                           <p className="text-gray-600 mt-4">
+                               simulation display point
+                           </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Navigation Buttons */}
@@ -206,7 +218,7 @@ export default function App() {
                         ← Back
                     </button>
 
-                    {currentStep < 2 && (
+                    {currentStep < 3 && (
                         <button
                             onClick={() => setCurrentStep(currentStep + 1)}
                             data-testid="next-button"
