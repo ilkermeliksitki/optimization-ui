@@ -27,6 +27,14 @@ export default function ConstraintBuilderStep({
             <OperatorBar onOperatorClick={onOperatorClick}/>
             <ParameterDropdown onParameterSelect={onParameterSelect} />
             <ValueInput onValueSubmit={onValueSubmit} />
+            <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-3">Current Constraint:</h3>
+                <ConstraintBoard
+                    tokens={tokens}
+                    onRemoveToken={onRemoveToken}
+                    onDone={onDone}
+                />
+            </div>
             {savedConstraints.length > 0 && (
                 <div className="saved-constraints">
                     <h2>Saved Constraints:</h2>
@@ -62,14 +70,6 @@ export default function ConstraintBuilderStep({
                     ))}
                 </div>
             )}
-            <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-3">Current Constraint:</h3>
-                <ConstraintBoard
-                    tokens={tokens}
-                    onRemoveToken={onRemoveToken}
-                    onDone={onDone}
-                />
-            </div>
         </div>
     );
 }
