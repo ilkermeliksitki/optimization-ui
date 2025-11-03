@@ -87,6 +87,7 @@ describe('Multi-Step Form Navigation', () => {
         // Navigate to final step
         fireEvent.click(screen.getByTestId('next-button')); // Step 2
         fireEvent.click(screen.getByTestId('next-button')); // Step 3
+        fireEvent.click(screen.getByTestId('next-button')); // Step 4
         
         expect(screen.queryByTestId('next-button')).not.toBeInTheDocument();
     });
