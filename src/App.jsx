@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import './App.css';
 import Stepper from '@/components/Stepper/Stepper.jsx';
-import MultiStepForm from '@/components/MultiStepForm/MultiStepForm.jsx';
 import ConstraintBuilderStep from '@/components/Steps/ConstraintBuilderStep.jsx';
 import ObjectiveBuilderStep from '@/components/Steps/ObjectiveBuilderStep.jsx';
 import ReviewStep from '@/components/Steps/ReviewStep.jsx';
-import { useToast } from '@/contexts/ToastContext.jsx';
+import ResultsStep from '@/components/Steps/ResultsStep.jsx';
 import ProgressModal from '@/components/ProgressModal/ProgressModal.jsx';
+import { useToast } from '@/contexts/ToastContext.jsx';
+import { runMockSimulation } from '@/utils/mockSimulation.js';
 
 export default function App() {
     const { showToast } = useToast();
@@ -17,8 +18,11 @@ export default function App() {
         { type: 'placeholder', value: null, id: 1 },
     ]);
     const [nextId, setNextId] = useState(2);
-    const [showProgress, setShowProgress] = useState(true);
-    const [progress, setProgress] = useState(0);
+
+    // simulation state
+    const [isSimulating, setIsSimulating] = useState(false);
+    const [simulationProgress, setSimulationProgress] = useState(0);
+    const [simulationResults, setSimulationResults] = useState(null);
 
     const availableOutputs = ['growth_rate_h-1', 'titer_g_L', 'yield_percent'];
 
@@ -77,12 +81,10 @@ export default function App() {
         });
     };
 
-    // handler for operator click (wrappper)
     const handleOperatorClick = (operator) => {
         handleAddToken({ type: 'operator', value: operator });
     };
 
-    // handler for parameter selection (wrapper)
     const handleParameterSelect = (parameter) => {
         handleAddToken({ type: 'parameter', value: parameter });
     };
@@ -116,7 +118,7 @@ export default function App() {
 
         // convert constraint back to tokens with ids
         let currentId = nextId;
-        const loadedTokens = constraintToEdit.map(token => {
+        const loadedTokens = constraintToEdit.map((token) => {
             const newToken = { ...token, id: currentId };
             currentId++;
             return newToken;
@@ -144,16 +146,48 @@ export default function App() {
         showToast('Objective deleted', 'info');
     };
 
-    const handleSubmit = (response) => {
-        console.log('Simulation response:', response);
-        // showToast('Simulation submitted successfully!', 'success');
+    // Simulation handler
+    const handleRunSimulation = async () => {
+        setIsSimulating(true);
+        setSimulationProgress(0);
+
+        // simulate progress updates
+        const progressInterval = setInterval(() => {
+            setSimulationProgress(prev => {
+                if (prev >= 95) {
+                    clearInterval(progressInterval);
+                    return 95;
+                }
+                return prev + 5;
+            });
+        }, 100);
+
+        try {
+            // Run mock simulation
+            const results = await runMockSimulation(savedConstraints, savedObjectives);
+
+            clearInterval(progressInterval);
+            setSimulationProgress(100);
+            setSimulationResults(results);
+
+            // wait a moment to show 100%
+            setTimeout(() => {
+                setIsSimulating(false);
+                setCurrentStep(3); // Navigate to Results step
+                showToast('Simulation completed successfully!', 'success');
+            }, 500);
+        } catch (error) {
+            clearInterval(progressInterval);
+            setIsSimulating(false);
+            showToast('Simulation failed', 'error');
+        }
     };
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-6xl mx-auto px-4">
                 <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">
-                    Microbial Optimization Builder
+                    Bioprocess Optimization Builder
                 </h1>
 
                 <Stepper steps={steps} currentStep={currentStep} />
@@ -187,19 +221,15 @@ export default function App() {
                             savedConstraints={savedConstraints}
                             savedObjectives={savedObjectives}
                             goToStep={setCurrentStep}
-                            onSubmit={handleSubmit}
+                            onSubmit={handleRunSimulation}
                         />
                     )}
-                    {/* reusults step coming soon */}
+
                     {currentStep === 3 && (
-                        <div className="text-center p-12">
-                           <h2 className="text-2xl font-bold text-gray-800">
-                               Results Step Soon!
-                           </h2>
-                           <p className="text-gray-600 mt-4">
-                               simulation display point
-                           </p>
-                        </div>
+                        <ResultsStep
+                            results={simulationResults}
+                            goToStep={setCurrentStep}
+                        />
                     )}
                 </div>
 
@@ -229,6 +259,13 @@ export default function App() {
                     )}
                 </div>
             </div>
+
+            {/* Progress Modal */}
+            <ProgressModal
+                isOpen={isSimulating}
+                progress={simulationProgress}
+                message="Running optimization simulation..."
+            />
         </div>
     );
 }
