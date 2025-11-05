@@ -48,8 +48,8 @@ View optimization results through interactive charts and summaries.
 ## Getting Started
 
 ### Prerequisites
-- Node.js >= 18.x
-- npm >= 9.x
+- ```Node.js >= 18.x```
+- ```npm >= 9.x```
 
 ### Installation
 1. Clone the repository:
